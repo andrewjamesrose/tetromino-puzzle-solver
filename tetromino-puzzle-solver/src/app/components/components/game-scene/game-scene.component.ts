@@ -17,7 +17,7 @@ import { TetrominoComponent } from '../tetromino/tetromino.component';
       <app-tetromino 
     [scene]="scene" 
     [rotationMatrix]="rotationMatrix()" 
-    [position]="[2, 2, 2]">
+    [position]="[0, 0, 0]">
   </app-tetromino>
     }
   `,
@@ -55,7 +55,7 @@ rotationMatrix = input.required<THREE.Matrix3>();
 
     // 2. Setup Camera
     this.camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100);
-    this.camera.position.set(10, 10, 10); // Look from a corner
+    this.camera.position.set(-10, 10, 10); // Look from a corner
 
     // 3. Setup Renderer
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
