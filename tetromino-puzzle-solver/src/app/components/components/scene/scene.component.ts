@@ -6,44 +6,26 @@ import { TetrominoComponent } from '../tetromino/tetromino.component';
 import { GridStateService } from '../../services/grid-state.service';
 
 @Component({
-  selector: 'app-game-scene',
+  selector: 'app-scene',
   standalone: true,
   imports: [LatticeComponent, TetrominoComponent],
-  // template: `
-  //   <div #canvasContainer class="scene-container"></div>
-    
-  //   @if (sceneSignal(); as scene) {
-  //     <app-lattice [scene]="scene"></app-lattice>
-      
-  //     <app-tetromino 
-  //   [scene]="scene" 
-  //   [rotationMatrix]="rotationMatrix()" 
-  //   [position]="[0, 0, 0]">
-  // </app-tetromino>
-  //   }
-  // `,
-  // template: './game-scene.component.html',
-  // styles: [`
-  //   .scene-container { width: 100%; height: 600px; display: block; }
-  // `]
-
-    templateUrl: './game-scene.component.html',
-  styleUrl: './game-scene.component.scss'
+  templateUrl: './scene.component.html',
+  styleUrl: './scene.component.scss'
 })
 export class GameSceneComponent implements AfterViewInit {
   @ViewChild('canvasContainer') containerRef!: ElementRef;
-  
+
   // Signal to notify children when the scene is ready
   sceneSignal = signal<THREE.Scene | null>(null);
 
-// 1. Define the input here to receive the matrix from the Root/Parent
-rotationMatrix = input.required<THREE.Matrix3>();
+  // 1. Define the input here to receive the matrix from the Root/Parent
+  rotationMatrix = input.required<THREE.Matrix3>();
 
   private renderer!: THREE.WebGLRenderer;
   private camera!: THREE.PerspectiveCamera;
   private scene!: THREE.Scene;
 
-  constructor(public gridStateService: GridStateService){
+  constructor(public gridStateService: GridStateService) {
 
   }
 
@@ -62,7 +44,7 @@ rotationMatrix = input.required<THREE.Matrix3>();
 
     // 2. Setup Camera
     this.camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100);
-    this.camera.position.set(-10, 10, 10); // Look from a corner
+    this.camera.position.set(-8, 8, 8); // Look from a corner
 
     // 3. Setup Renderer
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -85,6 +67,6 @@ rotationMatrix = input.required<THREE.Matrix3>();
     this.renderer.render(this.scene, this.camera);
   }
 
-  
-  
+
+
 }

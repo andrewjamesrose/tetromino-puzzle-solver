@@ -1,0 +1,235 @@
+// .controls {
+//     display: flex;
+//     flex-direction: column;
+//     gap: 1rem;
+//     padding: 1rem;
+//     background: #222;
+//     border-radius: 8px;
+//     color: white;
+//     width: 250px;
+// }
+
+// .slider-row {
+//     display: flex;
+//     flex-direction: column;
+// }
+
+// .slider-row label {
+//     font-family: monospace;
+//     font-size: 0.9rem;
+//     margin-bottom: 4px;
+// }
+
+// input[type="range"] {
+//     cursor: pointer;
+//     accent-color: #4caf50;
+//     /* Green sliders to match a "success" solve state */
+// }
+
+/* styles.scss */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #222222;
+    /* Use your exact ThreeJS background hex */
+    overflow-x: hidden;
+    /* Prevents accidental horizontal scrolling */
+}
+
+.controls-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* This is the horizontal layout for the three cards */
+.dashboard-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: #111;
+    /* Dark background for the control area */
+    border-top: 1px solid #333;
+}
+
+/* Base style for all three panels */
+.panel {
+    flex: 1;
+    /* Makes all three panels equal width */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: #222;
+    border-radius: 12px;
+    color: white;
+    min-height: 280px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.panel h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    color: #aaa;
+    border-bottom: 1px solid #333;
+    padding-bottom: 0.5rem;
+}
+
+/* UI Elements */
+.slider-row,
+.slider-container {
+    display: flex;
+    flex-direction: column;
+    font-family: monospace;
+}
+
+.button-group {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+}
+
+button {
+    padding: 0.6rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background: #444;
+    color: white;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background: #555;
+}
+
+button.primary {
+    background: #4caf50;
+}
+
+button.primary:hover {
+    background: #45a049;
+}
+
+select {
+    padding: 0.5rem;
+    background: #333;
+    color: white;
+    border: 1px solid #444;
+    border-radius: 4px;
+}
+
+.matrix-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+}
+
+input[type="range"] {
+    cursor: pointer;
+    accent-color: #4caf50;
+    width: 100%;
+}
+
+/* You can add global styles to this file, and also import other style files */
+/* app.component.scss or styles.scss */
+
+:host {
+    --bg-color: #222222;
+    /* Matches ThreeJS Background */
+    --panel-bg: #2a2a2a;
+    /* Slightly lighter for depth */
+    --accent-grey: #cccccc;
+    /* Light grey accent */
+    --text-main: #ffffff;
+    --font-family: 'Arial', sans-serif;
+
+    display: block;
+    background-color: var(--bg-color);
+    min-height: 100vh;
+    font-family: var(--font-family);
+    color: var(--text-main);
+}
+
+.controls-container {
+    background-color: var(--bg-color);
+}
+
+.dashboard-row {
+    background-color: var(--bg-color);
+    border-top: 1px solid #333;
+}
+
+.panel {
+    background: var(--panel-bg);
+    border-radius: 8px;
+    /* Font inherited from :host */
+
+    h3 {
+        font-family: var(--font-family);
+        border-bottom: 1px solid #444;
+        color: var(--accent-grey);
+    }
+}
+
+/* Update Sliders to Light Grey */
+input[type="range"] {
+    accent-color: var(--accent-grey);
+
+    &:hover {
+        filter: brightness(1.1);
+    }
+}
+
+/* Update Buttons */
+button {
+    font-family: var(--font-family);
+    background: #444;
+    color: white;
+    border: 1px solid #555;
+
+    &.primary {
+        background: var(--accent-grey);
+        color: #222;
+        /* Dark text for contrast on light grey */
+        border: none;
+        font-weight: bold;
+
+        &:hover {
+            background: #bbbbbb;
+        }
+    }
+
+    &:hover:not(.primary) {
+        background: #555;
+    }
+}
+
+/* Success message update */
+.status-msg {
+    font-family: var(--font-family);
+    font-weight: bold;
+
+    span[style*="color: #4caf50"] {
+        color: var(--accent-grey) !important;
+    }
+}
+
+/* Matrix formatting */
+matrix-display {
+    font-family: var(--font-family);
+}
+
+.valid-text {
+    color: var(--accent-grey);
+}
+
+.invalid-text {
+    color: #ff6666;
+    /* Keep red for errors, or use a medium grey */
+}
