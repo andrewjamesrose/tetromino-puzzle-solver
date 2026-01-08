@@ -44,7 +44,7 @@ export class AppComponent {
   // Generate the 24 unique rotations once
   readonly matrixOptions = generateOctahedralGroup();
 
-  constructor(private gridStateService: GridStateService){
+  constructor(public gridStateService: GridStateService){
 
   }
 
@@ -76,4 +76,23 @@ export class AppComponent {
   solve(){
     this.gridStateService.solve()
   }
+  
+  clearSolution() {
+    this.gridStateService.clearSolution()
+  }
+
+  animateSolution(){
+    this.gridStateService.animateSolution()
+  }
+
+  updateSpeed(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.gridStateService.delayMs.set(parseInt(value, 10));
+  }
+
+  updateInitialSelection(generatorPath: string, x: number, y: number, z: number){
+    this.gridStateService.selectInitialPiece( generatorPath, x, y, z)
+  }
+
+
 }

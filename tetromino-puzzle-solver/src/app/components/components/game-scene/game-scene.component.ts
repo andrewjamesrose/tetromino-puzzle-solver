@@ -3,29 +3,32 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { LatticeComponent } from '../lattice/lattice.component';
 import { TetrominoComponent } from '../tetromino/tetromino.component';
+import { GridStateService } from '../../services/grid-state.service';
 
 @Component({
   selector: 'app-game-scene',
   standalone: true,
   imports: [LatticeComponent, TetrominoComponent],
-  template: `
-    <div #canvasContainer class="scene-container"></div>
+  // template: `
+  //   <div #canvasContainer class="scene-container"></div>
     
-    @if (sceneSignal(); as scene) {
-      <app-lattice [scene]="scene"></app-lattice>
+  //   @if (sceneSignal(); as scene) {
+  //     <app-lattice [scene]="scene"></app-lattice>
       
-      <app-tetromino 
-    [scene]="scene" 
-    [rotationMatrix]="rotationMatrix()" 
-    [position]="[0, 0, 0]">
-  </app-tetromino>
-    }
-  `,
-  styles: [`
-    .scene-container { width: 100%; height: 600px; display: block; }
-  `]
-  //   templateUrl: './game-scene.component.html',
-  // styleUrl: './game-scene.component.scss'
+  //     <app-tetromino 
+  //   [scene]="scene" 
+  //   [rotationMatrix]="rotationMatrix()" 
+  //   [position]="[0, 0, 0]">
+  // </app-tetromino>
+  //   }
+  // `,
+  // template: './game-scene.component.html',
+  // styles: [`
+  //   .scene-container { width: 100%; height: 600px; display: block; }
+  // `]
+
+    templateUrl: './game-scene.component.html',
+  styleUrl: './game-scene.component.scss'
 })
 export class GameSceneComponent implements AfterViewInit {
   @ViewChild('canvasContainer') containerRef!: ElementRef;
@@ -39,6 +42,10 @@ rotationMatrix = input.required<THREE.Matrix3>();
   private renderer!: THREE.WebGLRenderer;
   private camera!: THREE.PerspectiveCamera;
   private scene!: THREE.Scene;
+
+  constructor(public gridStateService: GridStateService){
+
+  }
 
   ngAfterViewInit() {
     this.initThree();
@@ -77,4 +84,7 @@ rotationMatrix = input.required<THREE.Matrix3>();
     requestAnimationFrame(() => this.animate());
     this.renderer.render(this.scene, this.camera);
   }
+
+  
+  
 }

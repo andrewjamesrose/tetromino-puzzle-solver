@@ -96,37 +96,106 @@ export class Node {
     return root;
   }
 
-  export function solveWithSymmetry(root: ColumnNode, solution: number[] = [], rowMetadata: PlacementMetadata[]): number[] | null {
-    // 1. Pick the first actual column (Cell 0)
+  // export function solveWithSymmetry(root: ColumnNode, solution: number[] = [], rowMetadata: PlacementMetadata[]): number[] | null {
+  //   // 1. Pick the first actual column (Cell 0)
+  //   const firstCol = root.right as ColumnNode;
+  //   if (firstCol === root) return [];
+  
+  //   // 2. Identify all rows that cover Cell 0
+  //   // We want to filter these so we only pick rows using ONE specific rotation.
+  //   // We'll use Rotation Index 0 as our "canonical" orientation.
+  //   firstCol.cover();
+  
+  //   for (let row = firstCol.down; row !== firstCol; row = row.down) {
+  //     // --- SYMMETRY BREAKING FILTER ---
+  //     // Assuming you stored 'rotationId' on your row or node.
+  //     // We only allow the search to start if the first piece is in Rotation 0.
+  //     // If you don't have rotationId, you can skip rows based on a custom property.
+  //     if (rowMetadata[row.rowId].rotationIndex !== 0) {
+  //         continue; 
+  //     }
+  //     // --------------------------------
+  
+  //     solution.push(row.rowId);
+  
+  //     for (let node = row.right; node !== row; node = node.right) {
+  //       node.column.cover();
+  //     }
+  
+  //     // Now proceed with the standard recursive solver for the rest of the grid
+  //     const result = solve(root, solution);
+  //     if (result) return result;
+  
+  //     // Backtrack
+  //     for (let node = row.left; node !== row; node = node.left) {
+  //       node.column.uncover();
+  //     }
+  //     solution.pop();
+  //   }
+  
+  //   firstCol.uncover();
+  //   return null;
+  // }
+
+  function findNodeForRow(root: ColumnNode, rowId: number): Node | null {
+    // Iterate through columns until we find a row matching our ID
+    for (let col = root.right as ColumnNode; col !== root; col = col.right as ColumnNode) {
+      for (let row = col.down; row !== col; row = row.down) {
+        if (row.rowId === rowId) return row;
+      }
+    }
+    return null;
+  }
+
+  export function solveWithSymmetry(
+    root: ColumnNode, 
+    rowMetadata: PlacementMetadata[],
+    preSelectedRowId?: number // Optional: The rowId the user fixed in the UI
+  ): number[] | null {
+    
+    const solution: number[] = [];
+  
+    // --- PRE-FIXED PIECE LOGIC ---
+    if (preSelectedRowId !== undefined) {
+      // Find any node in the DLX that belongs to this rowId
+      const targetNode = findNodeForRow(root, preSelectedRowId);
+      
+      if (targetNode) {
+        solution.push(preSelectedRowId);
+        
+        // Manually cover the columns occupied by this fixed piece
+        targetNode.column.cover();
+        for (let node = targetNode.right; node !== targetNode; node = node.right) {
+          node.column.cover();
+        }
+        
+        // Proceed directly to standard solve, skipping symmetry breaking 
+        // because the user has already defined the "first" piece.
+        const result = solve(root, solution);
+        
+        // Important: If you want to allow the UI to reset, 
+        // you don't necessarily need to uncover here if the 
+        // whole DLX is rebuilt on each solve attempt.
+        return result;
+      }
+    }
+  
+    // --- STANDARD SYMMETRY BREAKING START (If no fixed piece) ---
     const firstCol = root.right as ColumnNode;
     if (firstCol === root) return [];
-  
-    // 2. Identify all rows that cover Cell 0
-    // We want to filter these so we only pick rows using ONE specific rotation.
-    // We'll use Rotation Index 0 as our "canonical" orientation.
     firstCol.cover();
   
     for (let row = firstCol.down; row !== firstCol; row = row.down) {
-      // --- SYMMETRY BREAKING FILTER ---
-      // Assuming you stored 'rotationId' on your row or node.
-      // We only allow the search to start if the first piece is in Rotation 0.
-      // If you don't have rotationId, you can skip rows based on a custom property.
-      if (rowMetadata[row.rowId].rotationIndex !== 0) {
-          continue; 
-      }
-      // --------------------------------
+      if (rowMetadata[row.rowId].rotationIndex !== 0) continue; 
   
       solution.push(row.rowId);
-  
       for (let node = row.right; node !== row; node = node.right) {
         node.column.cover();
       }
   
-      // Now proceed with the standard recursive solver for the rest of the grid
       const result = solve(root, solution);
       if (result) return result;
   
-      // Backtrack
       for (let node = row.left; node !== row; node = node.left) {
         node.column.uncover();
       }

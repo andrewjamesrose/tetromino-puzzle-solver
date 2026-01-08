@@ -37,5 +37,55 @@
 
 <!-- <button (click)="generateDLXGraph()">Generate DLX Graph</button> -->
 
+<div class="controls">
+  <h3>Set Initial Piece</h3>
+  
+  <select #rotSelect (change)="updateInitialSelection(rotSelect.value, x.valueAsNumber, y.valueAsNumber, z.valueAsNumber)">
+    @for (rot of matrixOptions; track rot.generatorPath) {
+      <option [value]="rot.generatorPath">{{ rot.generatorPath }} ({{ rot.schoenflies }})</option>
+    }
+  </select>
+
+  <div class="coords">
+    <input #x type="number" min="0" max="5" value="0" 
+      (input)="updateInitialSelection(rotSelect.value, x.valueAsNumber, y.valueAsNumber, z.valueAsNumber)">
+    
+    <input #y type="number" min="0" max="5" value="0" 
+      (input)="updateInitialSelection(rotSelect.value, x.valueAsNumber, y.valueAsNumber, z.valueAsNumber)">
+    
+    <input #z type="number" min="0" max="5" value="0" 
+      (input)="updateInitialSelection(rotSelect.value, x.valueAsNumber, y.valueAsNumber, z.valueAsNumber)">
+  </div>
+</div>
+@if (gridStateService.initialPiece(); as init) {
+  <p style="color: green;">Piece fits! Row ID: {{ gridStateService.initialRowId() }}</p>
+} @else {
+  <p style="color: red;">Piece exceeds grid boundaries at this position.</p>
+}
+
+
 <button (click)="solve()">Solve</button>
+
+<button (click)="animateSolution()">
+  Animate Solution
+</button>
+
+<button (click)="clearSolution()">
+  Clear Scene
+</button>
+
+<div class="slider-container">
+  <label for="speed">Animation Delay: {{ gridStateService.delayMs() }}ms</label>
+  <input 
+    id="speed"
+    type="range" 
+    min="0" 
+    max="1000" 
+    step="10"
+    [value]="gridStateService.delayMs()"
+    (input)="updateSpeed($event)"
+  />
+</div>
+
+
  

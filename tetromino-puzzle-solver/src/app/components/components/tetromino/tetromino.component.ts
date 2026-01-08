@@ -11,6 +11,7 @@ export class TetrominoComponent implements OnInit, OnChanges {
   scene = input.required<THREE.Scene>();
   rotationMatrix = input.required<THREE.Matrix3>(); // New Input from Parent
   position = input.required<number[]>(); 
+  color = input<string>('#ffa500'); // Default to orange if not provided
 
   private gridService = inject(GridStateService);
   private group = new THREE.Group();
@@ -37,9 +38,24 @@ export class TetrominoComponent implements OnInit, OnChanges {
     }
   }
 
+  ngOnDestroy() {
+    // 1. Remove the group from the Three.js Scene
+    this.scene().remove(this.group);
+
+    // 2. Dispose of GPU resources to prevent memory leaks
+    this.blocks.forEach(mesh => {
+      mesh.geometry.dispose();
+      if (Array.isArray(mesh.material)) {
+        mesh.material.forEach(m => m.dispose());
+      } else {
+        mesh.material.dispose();
+      }
+    });
+  }
+
   private initBlocks() {
     const geometry = new THREE.BoxGeometry(0.9, 0.9, 0.9);
-    const material = new THREE.MeshPhongMaterial({ color: 0xffa500 });
+    const material = new THREE.MeshPhongMaterial({ color: this.color() });
 
     // Create 4 physical meshes and store them
     for (let i = 0; i < 4; i++) {
