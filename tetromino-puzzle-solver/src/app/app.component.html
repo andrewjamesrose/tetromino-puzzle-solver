@@ -1,5 +1,4 @@
-hello world
-<div class="controls-container">
+<!-- <div class="controls-container">
   <label for="matrix-select">Select Transformation: </label>
   <select id="matrix-select" (change)="onMatrixChange($event)">
     @for (option of matrixOptions; track option.label) {
@@ -12,4 +11,31 @@ hello world
 
 <matrix-display [matrix]="activeMatrix()"></matrix-display>
 
+<app-game-scene [rotationMatrix]="activeMatrix()"></app-game-scene> -->
+<div class="controls-container">
+  <label for="matrix-select">Select Transformation: </label>
+  <select id="matrix-select" (change)="onMatrixChange($event)">
+    @for (option of matrixOptions; track option.generatorPath) {
+      <option [value]="option.generatorPath">
+        {{option.generatorPath}} - {{ option.schoenflies }} - {{ option.signedPermutation }}
+      </option>
+    }
+  </select>
+  
+  <div class="path-display">
+    <small>Sequence: {{ activeRotation().generatorPath }}</small>
+  </div>
+</div>
+
+<hr>
+
+<matrix-display [matrix]="activeMatrix()"></matrix-display>
+
 <app-game-scene [rotationMatrix]="activeMatrix()"></app-game-scene>
+
+<!-- <button (click)="generateValidPositions()">Generate Valid Positions</button> -->
+
+<!-- <button (click)="generateDLXGraph()">Generate DLX Graph</button> -->
+
+<button (click)="solve()">Solve</button>
+ 
