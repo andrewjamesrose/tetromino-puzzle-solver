@@ -64,6 +64,22 @@
         <input id="speed" type="range" min="0" max="1000" step="10" [value]="gridStateService.delayMs()"
           (input)="updateSpeed($event)" />
       </div>
+
+      <div class="slider-container">
+        <label for="progress">Step: {{ gridStateService.currentStep() + 1 }} / {{ gridStateService.solution().length
+          }}</label>
+        <input id="progress" type="range" min="0"
+          [max]="gridStateService.solution().length > 0 ? gridStateService.solution().length - 1 : 0" step="1"
+          [value]="gridStateService.currentStep()" (input)="updateStep($event)"
+          [disabled]="gridStateService.solution().length === 0" />
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="stepMode" [checked]="gridStateService.showSinglePiece()"
+          (change)="toggleStepMode($event)">
+        <label for="stepMode">Show single step only</label>
+      </div>
+
     </div>
   </div>
 </div>

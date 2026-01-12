@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import * as THREE from 'three';
 import { generateOctahedralGroup } from '../../../ultilities/octahedral-rotations';
 import { buildDLX, solveWithSymmetry } from '../../solver/solver';
@@ -36,13 +36,11 @@ export class GridStateService {
 
   private isAnimating = false;
 
+  public currentStep = signal<number>(0); // New signal for manual scrubbing
+  public showSinglePiece = signal<boolean>(false); // New signal for the checkbox
+
   // Signal to hold the current animation delay (default 100ms)
   public delayMs = signal<number>(100);
-
-
-
-
-
 
 
   // A signal to store just the one initial piece the user picked
@@ -50,6 +48,21 @@ export class GridStateService {
 
   // A signal to store the actual rowId for the solver to use later
   public initialRowId = signal<number | null>(null);
+
+  // Create a computed signal for what actually gets drawn in the 3D scene
+  public visiblePieces = computed(() => {
+    const all = this.solution();
+    const step = this.currentStep();
+
+    if (all.length === 0) return [];
+
+    // Toggle between showing just the specific piece vs everything up to that point
+    if (this.showSinglePiece()) {
+      return all[step] ? [all[step]] : [];
+    } else {
+      return all.slice(0, step + 1);
+    }
+  });
 
   /**
  * Generates all valid placements for the incidence matrix.
@@ -186,6 +199,7 @@ export class GridStateService {
     });
 
     this.solution.set(pieces);
+    this.currentStep.set(0)
   }
 
   public clearSolution() {
@@ -193,12 +207,36 @@ export class GridStateService {
     this.solution.set([]);
   }
 
-  public async setSolutionAnimated(rowIds: number[], delayMs: number = 100) {
-    this.isAnimating = true;
-    // 1. Clear any existing solution first
-    this.solution.set([]);
+  // public async setSolutionAnimated(rowIds: number[], delayMs: number = 100) {
+  //   this.isAnimating = true;
+  //   // 1. Clear any existing solution first
+  //   this.solution.set([]);
 
-    // 2. Map all IDs to their renderable data first
+  //   // 2. Map all IDs to their renderable data first
+  //   const allPieces: RenderablePiece[] = rowIds.map((id, i) => {
+  //     const data = this.validPlacements[id];
+  //     return {
+  //       matrix: data.rotationMatrix,
+  //       position: [data.gridOffset.x, data.gridOffset.y, data.gridOffset.z],
+  //       color: `hsl(${(i * 137.5) % 360}, 100%, 50%)`
+  //     };
+  //   });
+
+  //   // 3. Loop through and update the signal incrementally
+  //   for (const piece of allPieces) {
+  //     if (!this.isAnimating) break; // Stop if clear was called
+  //     // Add the next piece to the existing array
+  //     this.solution.update(current => [...current, piece]);
+
+  //     // Wait for the specified delay before adding the next one
+  //     await new Promise(resolve => setTimeout(resolve, this.delayMs()));
+  //   }
+  // }
+
+  public async setSolutionAnimated(rowIds: number[]) {
+    this.isAnimating = true;
+
+    // 1. Map all IDs to the full renderable data immediately
     const allPieces: RenderablePiece[] = rowIds.map((id, i) => {
       const data = this.validPlacements[id];
       return {
@@ -208,15 +246,24 @@ export class GridStateService {
       };
     });
 
-    // 3. Loop through and update the signal incrementally
-    for (const piece of allPieces) {
-      if (!this.isAnimating) break; // Stop if clear was called
-      // Add the next piece to the existing array
-      this.solution.update(current => [...current, piece]);
+    // 2. Set the solution signal once so the slider knows its maximum length
+    this.solution.set(allPieces);
 
-      // Wait for the specified delay before adding the next one
+    // 3. Start from the first step
+    this.currentStep.set(0);
+
+    // 4. Loop through the indices to move the progress slider
+    for (let i = 0; i < allPieces.length; i++) {
+      if (!this.isAnimating) break;
+
+      // Update the step signal - this triggers the 3D render AND moves the slider
+      this.currentStep.set(i);
+
+      // Wait for the duration set by the user's speed slider
       await new Promise(resolve => setTimeout(resolve, this.delayMs()));
     }
+
+    this.isAnimating = false;
   }
 
 }

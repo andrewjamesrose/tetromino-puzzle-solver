@@ -1,23 +1,16 @@
 <div #canvasContainer class="scene-container"></div>
-    
-  @if (sceneSignal(); as scene) {
-    <app-lattice [scene]="scene"></app-lattice>
-  
-    @if (gridStateService.initialPiece(); as init) {
-      <app-tetromino 
-        [scene]="scene" 
-        [rotationMatrix]="init.matrix" 
-        [position]="init.position"
-        [color]="init.color">
-      </app-tetromino>
-    }
-  
-    @for (piece of gridStateService.solution(); track $index) {
-      <app-tetromino 
-        [scene]="scene" 
-        [rotationMatrix]="piece.matrix" 
-        [position]="piece.position"
-        [color]="piece.color">
-      </app-tetromino>
-    }
-  }
+
+@if (sceneSignal(); as scene) {
+<app-lattice [scene]="scene"></app-lattice>
+
+@if (gridStateService.initialPiece(); as init) {
+<app-tetromino [scene]="scene" [rotationMatrix]="init.matrix" [position]="init.position" [color]="init.color">
+</app-tetromino>
+}
+
+<!--  @for (piece of gridStateService.solution(); track $index) { -->
+@for (piece of gridStateService.visiblePieces(); track $index) {
+<app-tetromino [scene]="scene" [rotationMatrix]="piece.matrix" [position]="piece.position" [color]="piece.color">
+</app-tetromino>
+}
+}

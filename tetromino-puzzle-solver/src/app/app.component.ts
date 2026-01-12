@@ -69,4 +69,14 @@ export class AppComponent {
     this.gridStateService.selectInitialPiece(generatorPath, x, y, z)
   }
 
+  updateStep(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.gridStateService.currentStep.set(parseInt(value, 10));
+  }
+
+  toggleStepMode(event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.gridStateService.showSinglePiece.set(checked);
+  }
+
 }
